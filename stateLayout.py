@@ -1,71 +1,89 @@
-from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QLineEdit,QCheckBox  #
-from PySide6.QtGui import QPalette, QColor, QMouseEvent
+from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox  #
+from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent
+from PySide6.QtCore import Slot
 import sys
 
-class Color(QWidget):
-
-    def __init__(self, color):
-        super(Color, self).__init__()
-        self.setAutoFillBackground(True)
-
-        palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(color))
-        self.setPalette(palette)
-
 class MainWindow(QMainWindow):
+    
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("My App")
-
-        pagelayout = QVBoxLayout()
-        button_layout = QHBoxLayout()
-        self.stacklayout = QStackedLayout()
-        # self.check = QCheckBox("TExto do Check")
-        self.check = checkBox(self)
-        self.check.setText("Meu texto")
-        self.text = QTextEdit("TEste1")
-
-        pagelayout.addLayout(button_layout)
-        pagelayout.addLayout(self.stacklayout)
-
-        self.btn = QPushButton("Ok")
-        self.btn.setVisible(False)
-        self.btn.pressed.connect(self.activate_tab_1)
-        button_layout.addWidget(self.btn)
-        # self.check.stateChanged.connect(self.activate_tab_2)
-        self.stacklayout.addWidget(self.check)
-        self.stacklayout.addWidget(self.text)
-        self.setFixedSize(200, 100)
+        #Cria os layouts
+        self.button_layout = QVBoxLayout()
+        
+        btn2 = QPushButton("Novo")
+        btn2.clicked.connect(self.addItem)
+        self.button_layout.addWidget(btn2)
+        self.addItem()
 
         widget = QWidget()
-        widget.setLayout(pagelayout)
+        widget.setLayout(self.button_layout)
         self.setCentralWidget(widget)
 
-    def activate_tab_1(self):
-        self.check.setText(self.text.toPlainText())
-        self.stacklayout.setCurrentIndex(0)
-        self.btn.setVisible(False)
+    def addItem(self):
+        #cria os widgets
+        #cria os dois layouts
+        hBoxlayout = QHBoxLayout()
+        stacklayout = QStackedLayout()
+        #adiciona ao Vbox laytout
+        self.button_layout.addLayout(hBoxlayout)
 
-    def activate_tab_2(self):
-        self.text.setText(self.check.text())
-        self.stacklayout.setCurrentIndex(1)
-        self.btn.setVisible(True)
+        #cria os controles
+        check = checkBox(self, stacklayout)
+        text = TextEdit("", self, check, stacklayout)
+        btn = botao(self, stacklayout, check, text)
+        btn.setText("OK")
+        check.setText("Meu texto")
 
+        hBoxlayout.addLayout(stacklayout)
+        hBoxlayout.addWidget(btn)
+        # self.button_layout.setContentsMargins(50, 50, 50,50)
+        #adiciona os wiggets
+        stacklayout.addWidget(check)
+        stacklayout.addWidget(text)
+        # self.setFixedSize(200, 100)
+
+
+    @Slot()
+    def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
+        check.setText(text.toPlainText())
+        stacklayout.setCurrentIndex(0)
+    @Slot()
+    def activate_tab_2(self,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
+        text.setText(check.text())
+        stacklayout.setCurrentIndex(1)
+        # btn.setVisible(True)
+
+class TextEdit(QTextEdit):
+    def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):
+        super().__init__(text, parent=parent)
+        self.check = check
+        self.sta = stac
+        self.paren = parent
+
+    def focusOutEvent(self, event: QFocusEvent):
+        self.paren.activate_tab_1(self.check, self.sta, self)
+
+   
 class checkBox(QCheckBox):
-    def __init__(self, parent: MainWindow):
+    def __init__(self, parent:QMainWindow, stack: QStackedLayout):
         super().__init__(parent=parent)
-        self.win = parent
+        self.stac = stack
         self.setText("Meu check Box")
         
     def mouseDoubleClickEvent(self, event: QMouseEvent):
+        self.stac.setCurrentIndex(1)
         if self.isChecked():
             self.setChecked(False)
-        else:
-            self.setChecked(True)
-        self.win.activate_tab_2()
 
 
+class botao(QPushButton):
+    def __init__(self, parent:MainWindow, stack: QStackedLayout, check: QCheckBox, text: QTextEdit):
+        super().__init__(parent=parent)
+        self.stac = stack
+        self.setText("Meu check Box")
+        self.clicked.connect(lambda: parent.activate_tab_1(check, stack,text))
 
 
 app = QApplication(sys.argv)
