@@ -1,7 +1,10 @@
-from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox  #
-from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent
+from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLabel  #
+from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGradient, QBrush, QIcon
 from PySide6.QtCore import Slot
 import sys
+from pathlib import Path
+
+ROOT = Path(__file__).parent
 
 class MainWindow(QMainWindow):
     
@@ -9,16 +12,34 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("My App")
+        self.setWindowOpacity(0.9)
         #Cria os layouts
+        self.vBoxlayoytParent = QVBoxLayout()
         self.button_layout = QVBoxLayout()
         
-        btn2 = QPushButton("Novo")
+        btn2 = QPushButton("adicionar")
         btn2.clicked.connect(self.addItem)
-        self.button_layout.addWidget(btn2)
+        # self.button_layout.addWidget(btn2)
         self.addItem()
 
+        self.vBoxlayoytParent.addLayout(self.button_layout)
+        self.vBoxlayoytParent.addWidget(btn2)
+
+        #Adicona um fundo gradient
+        p = QPalette()
+        gradient = QLinearGradient(400, 0, 0, 400)
+        # gradient = QLinearGradient(0, 0, 0, 400)
+        gradient.setColorAt(0.0, QColor("#3FF8F5"))
+        gradient.setColorAt(1.0, QColor("#A8C0FF"))
+        # gradient.setColorAt(0.0, QColor("#59D3FC"))
+        # gradient.setColorAt(1.0, QColor("#554DDE"))
+        # gradient.setColorAt(0.0, QColor(222, 254, 253))
+        # gradient.setColorAt(1.0, QColor(5, 134, 128))
+        p.setBrush(QPalette.Window, QBrush(gradient))
+        self.setPalette(p)
+
         widget = QWidget()
-        widget.setLayout(self.button_layout)
+        widget.setLayout(self.vBoxlayoytParent)
         self.setCentralWidget(widget)
 
     def addItem(self):
@@ -33,8 +54,10 @@ class MainWindow(QMainWindow):
         check = checkBox(self, stacklayout)
         text = TextEdit("", self, check, stacklayout)
         btn = botao(self, stacklayout, check, text)
-        btn.setText("OK")
-        check.setText("Meu texto")
+        # btn.setText("OK")
+        btn.setProperty("class", "buttonEdite")
+        btn.setIcon(QIcon(str(Path.joinpath(ROOT, "img\\edit.ico"))))
+        check.setText("Digite um texto")
 
         hBoxlayout.addLayout(stacklayout)
         hBoxlayout.addWidget(btn)
@@ -82,13 +105,17 @@ class botao(QPushButton):
     def __init__(self, parent:MainWindow, stack: QStackedLayout, check: QCheckBox, text: QTextEdit):
         super().__init__(parent=parent)
         self.stac = stack
-        self.setText("Meu check Box")
-        self.clicked.connect(lambda: parent.activate_tab_1(check, stack,text))
+        self.clicked.connect(lambda: parent.activate_tab_2(stack,text, check))
 
+    
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    
+    window = MainWindow()
+    window.show()
 
-app = QApplication(sys.argv)
+    with open("src\\style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
 
-window = MainWindow()
-window.show()
-
-app.exec()
+    app.exec()
