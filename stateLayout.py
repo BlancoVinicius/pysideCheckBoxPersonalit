@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLabel  #
+from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLayout#
 from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGradient, QBrush, QIcon
 from PySide6.QtCore import Slot
 import sys
@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         #cria os controles
         check = checkBox(self, stacklayout)
         text = TextEdit("", self, check, stacklayout)
-        btn = botao(self, stacklayout, check, text)
+        btn = botao(self, hBoxlayout, stacklayout, check, text)
         # btn.setText("OK")
         btn.setProperty("class", "buttonEdite")
         btn.setIcon(QIcon(str(Path.joinpath(ROOT, "img\\edit.ico"))))
@@ -67,7 +67,6 @@ class MainWindow(QMainWindow):
         stacklayout.addWidget(text)
         # self.setFixedSize(200, 100)
 
-
     @Slot()
     def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
         check.setText(text.toPlainText())
@@ -77,6 +76,14 @@ class MainWindow(QMainWindow):
         text.setText(check.text())
         stacklayout.setCurrentIndex(1)
         # btn.setVisible(True)
+    @Slot()
+    def remover(self, hbox: QLayout,btn: QPushButton,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
+        self.button_layout.removeItem(hbox)
+        btn.deleteLater()
+        stacklayout.deleteLater()
+        text.deleteLater()
+        check.deleteLater()
+
 
 class TextEdit(QTextEdit):
     def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):
@@ -102,10 +109,10 @@ class checkBox(QCheckBox):
 
 
 class botao(QPushButton):
-    def __init__(self, parent:MainWindow, stack: QStackedLayout, check: QCheckBox, text: QTextEdit):
+    def __init__(self, parent:MainWindow, hBox:QLayout, stack: QStackedLayout, check: QCheckBox, text: QTextEdit):
         super().__init__(parent=parent)
         self.stac = stack
-        self.clicked.connect(lambda: parent.activate_tab_2(stack,text, check))
+        self.clicked.connect(lambda: parent.remover(hBox,self, stack,text, check))
 
     
 if __name__ == '__main__':
