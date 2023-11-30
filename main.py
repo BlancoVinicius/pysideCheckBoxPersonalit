@@ -20,8 +20,6 @@ class MainWindow(QMainWindow):
         
         btn2 = QPushButton("adicionar")
         btn2.clicked.connect(self.addItem)
-        # self.button_layout.addWidget(btn2)
-        self.addItem()
 
         self.vBoxlayoytParent.addLayout(self.button_layout)
         self.vBoxlayoytParent.addWidget(btn2)
@@ -29,13 +27,8 @@ class MainWindow(QMainWindow):
         #Adicona um fundo gradient
         p = QPalette()
         gradient = QLinearGradient(400, 0, 0, 400)
-        # gradient = QLinearGradient(0, 0, 0, 400)
         gradient.setColorAt(0.0, QColor("#3FF8F5"))
         gradient.setColorAt(1.0, QColor("#A8C0FF"))
-        # gradient.setColorAt(0.0, QColor("#59D3FC"))
-        # gradient.setColorAt(1.0, QColor("#554DDE"))
-        # gradient.setColorAt(0.0, QColor(222, 254, 253))
-        # gradient.setColorAt(1.0, QColor(5, 134, 128))
         p.setBrush(QPalette.Window, QBrush(gradient))
         self.setPalette(p)
 
@@ -44,7 +37,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
     def addItem(self):
-        #cria os widgets
         #cria os dois layouts
         hBoxlayout = QHBoxLayout()
         stacklayout = QStackedLayout()
@@ -55,28 +47,26 @@ class MainWindow(QMainWindow):
         check = checkBox(self, stacklayout)
         text = TextEdit("", self, check, stacklayout)
         btn = botao(self, hBoxlayout, stacklayout, check, text)
-        # btn.setText("OK")
         btn.setProperty("class", "buttonEdite")
-        btn.setIcon(QIcon(str(Path.joinpath(ROOT, "img\\edit.ico"))))
+        btn.setIcon(QIcon(str(Path.joinpath(ROOT, "img\\excluir.ico"))))
         check.setText("Digite um texto")
 
         hBoxlayout.addLayout(stacklayout)
         hBoxlayout.addWidget(btn)
-        # self.button_layout.setContentsMargins(50, 50, 50,50)
         #adiciona os wiggets
         stacklayout.addWidget(check)
         stacklayout.addWidget(text)
-        # self.setFixedSize(200, 100)
-
+    
     @Slot()
     def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
         check.setText(text.toPlainText())
         stacklayout.setCurrentIndex(0)
+ 
     @Slot()
     def activate_tab_2(self,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
         text.setText(check.text())
         stacklayout.setCurrentIndex(1)
-        # btn.setVisible(True)
+ 
     @Slot()
     def remover(self, hbox: QLayout,btn: QPushButton,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
         self.button_layout.removeItem(hbox)
@@ -101,7 +91,6 @@ class checkBox(QCheckBox):
     def __init__(self, parent:QMainWindow, stack: QStackedLayout):
         super().__init__(parent=parent)
         self.stac = stack
-        self.setText("Meu check Box")
         
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         self.stac.setCurrentIndex(1)
@@ -122,7 +111,7 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
 
-    with open("style.qss", "r") as f:
+    with open("src\\style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 
