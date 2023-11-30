@@ -3,7 +3,7 @@ from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGra
 from PySide6.QtCore import Slot
 import sys
 from pathlib import Path
-import rc_icons
+from modulos import rc_icons
 
 ROOT = Path(__file__).parent
 
@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         text = TextEdit("", self, check, stacklayout)
         btn = botao(self, hBoxlayout, stacklayout, check, text)
         btn.setProperty("class", "buttonEdite")
-        btn.setIcon(QIcon(str(Path.joinpath(ROOT, "img\\excluir.ico"))))
+        btn.setIcon(QIcon(str(Path.joinpath(ROOT, "modulos\\img\\excluir.ico"))))
         check.setText("Digite um texto")
 
         hBoxlayout.addLayout(stacklayout)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
 
-    with open("src\\style.qss", "r") as f:
+    with open("src\\modulos\\style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 

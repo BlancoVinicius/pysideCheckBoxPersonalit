@@ -36,13 +36,13 @@ QCheckBox{
 }
 
 QCheckBox::indicator:checked {
-    image: url(:/icons/img/Select.ico);
+    image: url(:/icons/modulos/img/Select.ico);
     width: 25px;
     height: 25px;
 }  
 
 QCheckBox::indicator:unchecked {
-    image: url(:/icons/img/NotSelect.ico);
+    image: url(:/icons/modulos/img/NotSelect.ico);
     width: 25px;
     height: 25px;
 }  
