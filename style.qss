@@ -34,3 +34,15 @@ TextEdit {
 QCheckBox{
     font: bold 15px;
 }
+
+QCheckBox::indicator:checked {
+    image: url(:/icons/img/Select.ico);
+    width: 25px;
+    height: 25px;
+}  
+
+QCheckBox::indicator:unchecked {
+    image: url(:/icons/img/NotSelect.ico);
+    width: 25px;
+    height: 25px;
+}  

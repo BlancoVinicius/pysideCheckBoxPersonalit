@@ -3,6 +3,7 @@ from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGra
 from PySide6.QtCore import Slot
 import sys
 from pathlib import Path
+import rc_icons
 
 ROOT = Path(__file__).parent
 
@@ -121,7 +122,7 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
 
-    with open("src\\style.qss", "r") as f:
+    with open("style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 
