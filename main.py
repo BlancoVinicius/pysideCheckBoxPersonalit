@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLayout#
-from PySide6.QtGui import QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGradient, QBrush, QIcon
-from PySide6.QtCore import Slot
+from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLayout, QMessageBox
+from PySide6.QtGui import QCursor, QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGradient, QBrush, QIcon
+from PySide6.QtCore import Slot, Qt
 import sys
 from pathlib import Path
 from modulos import rc_icons
@@ -12,13 +12,15 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("Janela de tarefas")
         self.setWindowOpacity(0.9)
         #Cria os layouts
         self.vBoxlayoytParent = QVBoxLayout()
         self.button_layout = QVBoxLayout()
         
         btn2 = QPushButton("adicionar")
+        btn2.setProperty("class", "add-item")
+        btn2.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         btn2.clicked.connect(self.addItem)
 
         self.vBoxlayoytParent.addLayout(self.button_layout)
@@ -47,7 +49,7 @@ class MainWindow(QMainWindow):
         check = checkBox(self, stacklayout)
         text = TextEdit("", self, check, stacklayout)
         btn = botao(self, hBoxlayout, stacklayout, check, text)
-        btn.setProperty("class", "buttonEdite")
+        btn.setProperty("class", "buttonExclud")
         btn.setIcon(QIcon(str(Path.joinpath(ROOT, "modulos\\img\\excluir.ico"))))
         check.setText("Digite um texto")
 
@@ -69,16 +71,22 @@ class MainWindow(QMainWindow):
  
     @Slot()
     def remover(self, hbox: QLayout,btn: QPushButton,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
-        self.button_layout.removeItem(hbox)
-        btn.deleteLater()
-        stacklayout.deleteLater()
-        text.deleteLater()
-        check.deleteLater()
+        msg = QMessageBox(QMessageBox.Icon.Critical, "EXCLUIR!", "Tem certeza que deseja excluir o item?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        
+        respMsg = msg.exec()
+
+        if respMsg == QMessageBox.StandardButton.Yes:
+            self.button_layout.removeItem(hbox)
+            btn.deleteLater()
+            stacklayout.deleteLater()
+            text.deleteLater()
+            check.deleteLater()
 
 
 class TextEdit(QTextEdit):
     def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):
         super().__init__(text, parent=parent)
+        self.setMinimumSize(300, 100)
         self.check = check
         self.sta = stac
         self.paren = parent
@@ -91,17 +99,24 @@ class checkBox(QCheckBox):
     def __init__(self, parent:QMainWindow, stack: QStackedLayout):
         super().__init__(parent=parent)
         self.stac = stack
-        
+        self.stateChanged.connect(self.__stateChenge)
+    
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         self.stac.setCurrentIndex(1)
         if self.isChecked():
             self.setChecked(False)
 
-
+    def __stateChenge(self):
+        if self.isChecked():
+            self.setStyleSheet("text-decoration: line-through; color: #757575")
+        else:
+            self.setStyleSheet("text-decoration: none; color: #101010")
+            
 class botao(QPushButton):
     def __init__(self, parent:MainWindow, hBox:QLayout, stack: QStackedLayout, check: QCheckBox, text: QTextEdit):
         super().__init__(parent=parent)
         self.stac = stack
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.clicked.connect(lambda: parent.remover(hBox,self, stack,text, check))
 
     
@@ -111,7 +126,7 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
 
-    with open("src\\modulos\\style.qss", "r") as f:
+    with open("pysideCheckBoxPersonalit\\modulos\\style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 

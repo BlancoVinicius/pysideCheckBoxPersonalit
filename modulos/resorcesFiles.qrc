@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="icons">
-    <file>modulos/img/NotSelect.ico</file>
-    <file>modulos/img/Select.ico</file>
     <file>modulos/img/excluir.ico</file>
+    <file>modulos/img/not.ico</file>
+    <file>modulos/img/yes.ico</file>
   </qresource>
 </RCC>

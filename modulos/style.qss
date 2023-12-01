@@ -9,17 +9,18 @@ QMainWindow:window {
 }
 
 botao {
-    border-radius: 3px;
-    border :3px solid #00d4ff;
+    border-radius: 5px;
+    border :1px solid #00d4ff;
 }
-QPushButton{
+
+QPushButton[class="add-item"]{
     background-color: antiquewhite;
     border-radius: 5px;
     min-height: 20px;
     font: bold;
 }
 
-QPushButton[class="buttonEdite"] {
+botao[class="buttonExclud"] {
     background-color: antiquewhite;
     height: 20px;
     width: 20px;
@@ -28,21 +29,25 @@ QPushButton[class="buttonEdite"] {
 TextEdit {
     background-color: antiquewhite;
     border-radius: 5px;
-    font: bold 15px;
+    font: bold 17px;
 }
 
 QCheckBox{
-    font: bold 15px;
+    font: bold 17px;
 }
 
 QCheckBox::indicator:checked {
-    image: url(:/icons/modulos/img/Select.ico);
+    image: url(:/icons/modulos/img/yes.ico);
     width: 25px;
     height: 25px;
 }  
 
 QCheckBox::indicator:unchecked {
-    image: url(:/icons/modulos/img/NotSelect.ico);
+    image: url(:/icons/modulos/img/not.ico);
     width: 25px;
     height: 25px;
-}  
+} 
+
+QMessageBox {
+    spacing: 50;
+}
