@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLayout, QMessageBox
+from PySide6.QtWidgets import QStackedLayout, QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,QVBoxLayout, QTextEdit,QCheckBox, QLayout, QMessageBox, QInputDialog
 from PySide6.QtGui import QCursor, QPalette, QColor, QMouseEvent, QFocusEvent, QLinearGradient, QBrush, QIcon
 from PySide6.QtCore import Slot, Qt
 import sys
 from pathlib import Path
 from modulos import rc_icons
+from modulos.templat import Templat
 
 ROOT = Path(__file__).parent
 
@@ -38,6 +39,8 @@ class MainWindow(QMainWindow):
         widget.setLayout(self.vBoxlayoytParent)
         self.setCentralWidget(widget)
 
+        
+
     def addItem(self):
         #cria os dois layouts
         hBoxlayout = QHBoxLayout()
@@ -58,6 +61,8 @@ class MainWindow(QMainWindow):
         #adiciona os wiggets
         stacklayout.addWidget(check)
         stacklayout.addWidget(text)
+
+        self.saveTemplat()
     
     @Slot()
     def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
@@ -72,7 +77,6 @@ class MainWindow(QMainWindow):
     @Slot()
     def remover(self, hbox: QLayout,btn: QPushButton,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
         msg = QMessageBox(QMessageBox.Icon.Critical, "EXCLUIR!", "Tem certeza que deseja excluir o item?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
-        
         respMsg = msg.exec()
 
         if respMsg == QMessageBox.StandardButton.Yes:
@@ -82,6 +86,31 @@ class MainWindow(QMainWindow):
             text.deleteLater()
             check.deleteLater()
 
+    def saveTemplat(self):
+        modelo = {"templats": [ 
+            {"name": "conferencia", "mensages": ["Mensage1", "item1", "item2", "item3"]},
+        ]}
+
+        imput = QInputDialog(self)
+        t = imput.getText(self, "Nome", "Preencha um nome.")
+        if not t[1]:
+            return    
+            
+        templat = Templat(t[0])
+        templat.mensagens.clear()
+        
+        for i in range(self.button_layout.count()):
+            r:QHBoxLayout
+            stack: QStackedLayout
+            c:QCheckBox
+            
+            hLayout =self.button_layout.itemAt(i)
+            stack = hLayout.itemAt(0)
+            cBox = stack.itemAt(0).widget()
+            text = cBox.text()
+            templat.mensagens.append(text)    
+        
+        print(templat.mensagens)
 
 class TextEdit(QTextEdit):
     def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):
