@@ -5,6 +5,9 @@ import sys
 from pathlib import Path
 from modulos import rc_icons
 from modulos.templat import Templat
+from dataclasses import dataclass, asdict
+import json
+from modulos.service import saveJson
 
 ROOT = Path(__file__).parent
 
@@ -22,7 +25,7 @@ class MainWindow(QMainWindow):
         btn2 = QPushButton("adicionar")
         btn2.setProperty("class", "add-item")
         btn2.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        btn2.clicked.connect(self.addItem)
+        btn2.clicked.connect(lambda: self.addItem())
 
         self.vBoxlayoytParent.addLayout(self.button_layout)
         self.vBoxlayoytParent.addWidget(btn2)
@@ -41,7 +44,7 @@ class MainWindow(QMainWindow):
 
         
 
-    def addItem(self):
+    def addItem(self, textTitle:str= "Digite um texto"):
         #cria os dois layouts
         hBoxlayout = QHBoxLayout()
         stacklayout = QStackedLayout()
@@ -54,7 +57,7 @@ class MainWindow(QMainWindow):
         btn = botao(self, hBoxlayout, stacklayout, check, text)
         btn.setProperty("class", "buttonExclud")
         btn.setIcon(QIcon(str(Path.joinpath(ROOT, "modulos\\img\\excluir.ico"))))
-        check.setText("Digite um texto")
+        check.setText(textTitle)
 
         hBoxlayout.addLayout(stacklayout)
         hBoxlayout.addWidget(btn)
@@ -87,16 +90,13 @@ class MainWindow(QMainWindow):
             check.deleteLater()
 
     def saveTemplat(self):
-        modelo = {"templats": [ 
-            {"name": "conferencia", "mensages": ["Mensage1", "item1", "item2", "item3"]},
-        ]}
 
         imput = QInputDialog(self)
-        t = imput.getText(self, "Nome", "Preencha um nome.")
-        if not t[1]:
+        name = imput.getText(self, "Nome", "Preencha um nome para o modelo.")
+        if not name[1]:
             return    
             
-        templat = Templat(t[0])
+        templat = Templat(name[0])
         templat.mensagens.clear()
         
         for i in range(self.button_layout.count()):
@@ -110,7 +110,9 @@ class MainWindow(QMainWindow):
             text = cBox.text()
             templat.mensagens.append(text)    
         
-        print(templat.mensagens)
+        j = json.dumps(asdict(templat))
+        saveJson(name[0], j)
+        
 
 class TextEdit(QTextEdit):
     def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):
