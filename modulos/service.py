@@ -2,7 +2,7 @@ import sys
 import os
 from pathlib import Path
 import json
-
+from dataclasses import dataclass, asdict
 
 
 ROOT = Path(__file__).parent
@@ -18,8 +18,25 @@ def readJson(pathName: str):
 def saveJson(pathName: str, jsonValid: str):
     pathName += ".json"
     PATHSAVE = Path.joinpath(ROOT, pathName)
-    with open(PATHSAVE, "w") as f: # a = append 
-        f.write(jsonValid)
+    
+    dictTamplayt: dict
+   
+    if Path.is_file(PATHSAVE):
+        with open(PATHSAVE, "r") as f: # a = append 
+            fileText = f.read()
+            if fileText != "":
+                dictTamplayt = json.loads(fileText)
+                dictTamplayt["templayts"].append(json.loads(jsonValid))
+            
+        with open(PATHSAVE, "w") as f: # a = append 
+            j = json.dumps(dictTamplayt)
+            f.write(j)
+        
+    else:
+        with open(PATHSAVE, "w") as f: # a = append 
+            dictTamplayt = {"templayts": []}
+            dictTamplayt["templayts"].append(json.loads(jsonValid))
+            f.write(json.dumps(dictTamplayt))
 
 #deserializar======
 # j= readJson("pysideCheckBoxPersonalit/modulos/teste.json")

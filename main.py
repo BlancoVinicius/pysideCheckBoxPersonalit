@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
         stacklayout.addWidget(check)
         stacklayout.addWidget(text)
 
-        self.saveTemplat()
+        #self.saveTemplat()
     
     @Slot()
     def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
             stacklayout.deleteLater()
             text.deleteLater()
             check.deleteLater()
-
+        self.saveTemplat()
     def saveTemplat(self):
 
         imput = QInputDialog(self)
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     window = MainWindow()
     window.show()
 
-    with open("pysideCheckBoxPersonalit\\modulos\\style.qss", "r") as f:
+    with open("modulos\\style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
 
