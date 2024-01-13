@@ -7,7 +7,8 @@ from modulos import rc_icons
 from modulos.templat import Templat
 from dataclasses import dataclass, asdict
 import json
-from modulos.service import saveJson
+from modulos.service import saveJson, readJson
+from modulos.manuBar import MenuBar
 
 ROOT = Path(__file__).parent
 
@@ -15,6 +16,8 @@ class MainWindow(QMainWindow):
     
     def __init__(self):
         super().__init__()
+
+        self.templaytList = []
 
         self.setWindowTitle("Janela de tarefas")
         self.setWindowOpacity(0.9)
@@ -41,8 +44,9 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(self.vBoxlayoytParent)
         self.setCentralWidget(widget)
-
-        
+               
+        self.setMenuBar(MenuBar(parent=self))
+        self.buildMenuTemplat()
 
     def addItem(self, textTitle:str= "Digite um texto"):
         #cria os dois layouts
@@ -65,8 +69,6 @@ class MainWindow(QMainWindow):
         stacklayout.addWidget(check)
         stacklayout.addWidget(text)
 
-        #self.saveTemplat()
-    
     @Slot()
     def activate_tab_1(self, check: QCheckBox, stacklayout:QStackedLayout, text: QTextEdit):
         check.setText(text.toPlainText())
@@ -79,6 +81,7 @@ class MainWindow(QMainWindow):
  
     @Slot()
     def remover(self, hbox: QLayout,btn: QPushButton,stacklayout:QStackedLayout, text:QTextEdit, check:QCheckBox):
+        
         msg = QMessageBox(QMessageBox.Icon.Critical, "EXCLUIR!", "Tem certeza que deseja excluir o item?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
         respMsg = msg.exec()
 
@@ -88,7 +91,20 @@ class MainWindow(QMainWindow):
             stacklayout.deleteLater()
             text.deleteLater()
             check.deleteLater()
-        self.saveTemplat()
+        
+
+
+    def clearItens(self):
+        try:
+            for filho in self.button_layout.children():
+                print(filho)
+                for item in filho.children():
+                    print(item)
+                    for i in item.children():
+                        print(i)
+        except:
+            pass
+        
     def saveTemplat(self):
 
         imput = QInputDialog(self)
@@ -109,10 +125,28 @@ class MainWindow(QMainWindow):
             cBox = stack.itemAt(0).widget()
             text = cBox.text()
             templat.mensagens.append(text)    
+    
+        if len(templat.mensagens) > 0:
+            j = json.dumps(asdict(templat))
+            saveJson(name[0], j)
+            m:MenuBar
+            m = self.menuBar()
+            m.addMenuItemTemplayts(templat.name)
+        else:
+            msg = QMessageBox(QMessageBox.Icon.Information, "Sem Itens!", "Não existe itens para salvar!", QMessageBox.StandardButton.Ok, self)
+            msg.exec()
         
-        j = json.dumps(asdict(templat))
-        saveJson(name[0], j)
-        
+    def buildMenuTemplat(self):
+        myDict: dict
+        textFile = readJson() 
+        if textFile != None and textFile != "":
+            myDict = json.loads(textFile)
+            for lista in myDict["templayts"]:
+                templay = Templat(**lista)
+                self.templaytList.append(templay)
+                m:MenuBar
+                m = self.menuBar()
+                m.addMenuItemTemplayts(templay.name)
 
 class TextEdit(QTextEdit):
     def __init__(self, text:str, parent:MainWindow, check: QCheckBox, stac: QStackedLayout):

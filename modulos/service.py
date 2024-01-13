@@ -10,28 +10,42 @@ CONFIGURATION = "configuration.json"
 PATHSAVE = Path.joinpath(ROOT, CONFIGURATION)
 
 
-def readJson(pathName: str):
-    if os.path.isfile(pathName):
-        with open(pathName) as f:
-            return json.load(f)
-        
+def readJson():
+    if os.path.isfile(PATHSAVE):
+        with open(PATHSAVE, "r") as f:
+            return f.read()
+    else:
+        return None
+
 def saveJson(pathName: str, jsonValid: str):
     pathName += ".json"
-    PATHSAVE = Path.joinpath(ROOT, pathName)
+    # PATHSAVE = Path.joinpath(ROOT, pathName)
     
     dictTamplayt: dict
-   
+
     if Path.is_file(PATHSAVE):
-        with open(PATHSAVE, "r") as f: # a = append 
-            fileText = f.read()
-            if fileText != "":
-                dictTamplayt = json.loads(fileText)
-                dictTamplayt["templayts"].append(json.loads(jsonValid))
-            
+        j = readJson()
+        if  j != None and j != "":
+            dictTamplayt = json.loads(j)
+            dictTamplayt["templayts"].append(json.loads(jsonValid))
+        else:
+            dictTamplayt = {"templayts": []}
+            dictTamplayt["templayts"].append(json.loads(jsonValid))
+    
         with open(PATHSAVE, "w") as f: # a = append 
-            j = json.dumps(dictTamplayt)
-            f.write(j)
+            f.write(json.dumps(dictTamplayt))
         
+        
+        # with open(PATHSAVE, "r") as f: # a = append 
+        #     fileText = f.read()
+        #     if fileText != "":
+        #         dictTamplayt = json.loads(fileText)
+        #         dictTamplayt["templayts"].append(json.loads(jsonValid))
+        #     else:
+        #         dictTamplayt = {"templayts": []}
+        #         dictTamplayt["templayts"].append(json.loads(jsonValid))
+            
+
     else:
         with open(PATHSAVE, "w") as f: # a = append 
             dictTamplayt = {"templayts": []}

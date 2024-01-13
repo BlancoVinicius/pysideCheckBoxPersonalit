@@ -1,6 +1,1 @@
-{"templads": [
-    
-    {"name": "conferencia", "mensage": ["teste1"]},
-    {"name": "confHD", "mensage": ["teste2", "teste2"]}
-
-]}
+{"templayts": [{"name": "teste", "mensagens": ["Digite um texto"]}, {"name": "Teste", "mensagens": ["Digite um texto", "Digite um texto"]}, {"name": "conferencia", "mensagens": ["Digite um texto", "Digite um texto", "Digite um texto"]}, {"name": "teste4", "mensagens": ["Digite um texto"]}, {"name": "teste", "mensagens": []}, {"name": "confere", "mensagens": ["teste1", "item2"]}, {"name": "jkskdla", "mensagens": ["Digite um texto"]}, {"name": "sdhasjdhsadsajdhsk", "mensagens": ["Digite um texto"]}, {"name": "hdkja", "mensagens": ["Digite um texto"]}, {"name": "Conerencia", "mensagens": ["Digite um texto", "Digite um texto", "Digite um texto"]}, {"name": "Confere555", "mensagens": ["Digite um texto", "Digite um texto"]}]}
